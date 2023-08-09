@@ -21,6 +21,9 @@ async function dbConnection() {
     console.log("Database connection successfull!");
 
     app.get("/", async (req, res) => {
+      res.json({ success: true, data: "Hello" });
+    });
+    app.get("/products", async (req, res) => {
       const data = await client
         .db("pc-builder")
         .collection("products")
@@ -28,13 +31,23 @@ async function dbConnection() {
         .toArray();
       res.json({ success: true, data });
     });
-    app.get("/:id", async (req, res) => {
+    app.get("/products/:id", async (req, res) => {
       const { id } = req.params;
 
       const data = await client
         .db("pc-builder")
         .collection("products")
         .findOne({ id: Number(id) });
+      res.json({ success: true, data });
+    });
+    app.get("/products/category/:category", async (req, res) => {
+      const { category } = req.params;
+
+      const data = await client
+        .db("pc-builder")
+        .collection("products")
+        .find({ category: category })
+        .toArray();
       res.json({ success: true, data });
     });
 
