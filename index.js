@@ -32,6 +32,15 @@ async function dbConnection() {
         .db("pc-builder")
         .collection("products")
         .find({})
+        .project({
+          id: 1,
+          image: 1,
+          productName: 1,
+          category: 1,
+          price: 1,
+          status: 1,
+          individualRating: 1,
+        })
         .toArray();
       res.json({ success: true, data });
     });
@@ -46,12 +55,40 @@ async function dbConnection() {
     });
     app.get("/products/category/:category", async (req, res) => {
       const { category } = req.params;
-
-      const data = await client
-        .db("pc-builder")
-        .collection("products")
-        .find({ category: category })
-        .toArray();
+      let data = [];
+      if (category !== "others") {
+        data = await client
+          .db("pc-builder")
+          .collection("products")
+          .find({ category: { $regex: category, $options: "i" } })
+          .project({
+            id: 1,
+            image: 1,
+            productName: 1,
+            category: 1,
+            price: 1,
+            status: 1,
+            individualRating: 1,
+          })
+          .toArray();
+      } else {
+        data = await client
+          .db("pc-builder")
+          .collection("products")
+          .find({
+            category: {
+              $nin: [
+                "Processor",
+                "RAM",
+                "Motherboard",
+                "Monitor",
+                "Power Supply",
+                "Storage Device",
+              ],
+            },
+          })
+          .toArray();
+      }
       res.json({ success: true, data });
     });
 
