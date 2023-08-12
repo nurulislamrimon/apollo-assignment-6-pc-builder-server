@@ -69,6 +69,7 @@ async function dbConnection() {
             price: 1,
             status: 1,
             individualRating: 1,
+            keyFeatures: 1,
           })
           .toArray();
       } else {
